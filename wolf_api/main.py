@@ -78,20 +78,27 @@ def _append_jsonl(blob_path: str, record: dict) -> dict:
 CATALOG = {}
 
 
-def _load_catalog():
+def loadcatalog():
     global CATALOG
-    catalog_path = os.environ.get("CATALOG_PATH", "catalog.json")
-    if os.path.exists(catalog_path):
-        with open(catalog_path) as f:
-            CATALOG = json.load(f)
-        logger.info(f"Loaded catalog: {len(CATALOG)} products")
-    else:
-        logger.warning(f"Catalog not found at {catalog_path}")
+    try:
+        bucket = storage_client.bucket(KB_GCS_BUCKET)
+        blob = bucket.blob("catalog.json")
+        CATALOG = json.loads(blob.download_as_text())
+        logger.info(f"Loaded catalog from GCS: {len(CATALOG)} products")
+    except Exception as e:
+        logger.warning(f"Catalog not found in GCS: {e}")
+        catalog_path = os.environ.get("CATALOG_PATH", "catalog.json")
+        if os.path.exists(catalog_path):
+            with open(catalog_path) as f:
+                CATALOG = json.load(f)
+            logger.info(f"Loaded catalog from local: {len(CATALOG)} products")
+        else:
+            logger.warning("Catalog not found anywhere — /find_products will return empty")
 
 
 @app.on_event("startup")
 async def startup():
-    _load_catalog()
+    loadcatalog()
 
 
 @app.get("/health")
