@@ -3,6 +3,27 @@
 # Deploys the unified Panelin API (Wolf API + v4 Engine) to Google Cloud Run.
 # Uses Dockerfile.production at repo root for the complete container.
 #
+# ── GCP PREREQUISITES ──────────────────────────────────────────────────────────
+# 1. Workload Identity Pool configured for this repo's OIDC token
+# 2. Service Account (GCP_DEPLOY_SA_EMAIL) must have:
+#      - roles/artifactregistry.writer  on cloud-run-repo
+#      - roles/run.developer            on panelin-api service
+# 3. The WIF pool principal MUST be granted roles/iam.serviceAccountTokenCreator
+#    on the deploy SA so it can acquire an access token via impersonation:
+#
+#    gcloud iam service-accounts add-iam-policy-binding <GCP_DEPLOY_SA_EMAIL> \
+#      --role="roles/iam.serviceAccountTokenCreator" \
+#      --member="principalSet://iam.googleapis.com/projects/<PROJECT_NUMBER>/\
+# locations/global/workloadIdentityPools/<POOL_ID>/\
+# attribute.repository/matiasportugau-ui/GPT-PANELIN-Final"
+#
+# ── AUTHENTICATION STRATEGY ────────────────────────────────────────────────────
+# Uses token_format='access_token' to eagerly acquire the SA token at auth time,
+# then passes it directly to docker/login-action — this avoids the gcloud
+# credential-helper path that previously triggered the lazy impersonation and
+# surfaced the 403 PERMISSION_DENIED error during docker push.
+# ───────────────────────────────────────────────────────────────────────────────
+#
 # Triggered on push to main when relevant files change, or manually.
 
 name: Deploy Panelin API to Cloud Run
@@ -36,25 +57,36 @@ env:
 jobs:
   deploy:
     name: Deploy Panelin API
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Authenticates via Workload Identity Federation and eagerly acquires an
+      # access token by impersonating the deploy service account.
+      # The token is exposed as steps.auth.outputs.access_token and used below
+      # to log Docker in without going through the gcloud credential helper.
       - name: Authenticate to Google Cloud
+        id: auth
         uses: google-github-actions/auth@v3
         with:
           project_id: ${{ env.PROJECT_ID }}
           workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
           service_account: ${{ secrets.GCP_DEPLOY_SA_EMAIL }}
+          token_format: 'access_token'
+
+      # Log Docker in using the access token directly — avoids the gcloud
+      # docker-helper impersonation path that caused the 403 on docker push.
+      - name: Log in to Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ARTIFACT_REGISTRY }}
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
-
-      - name: Configure Docker for Artifact Registry
-        run: |
-          gcloud auth configure-docker ${{ env.ARTIFACT_REGISTRY }}
 
       - name: Build and Push Docker Image
         run: |

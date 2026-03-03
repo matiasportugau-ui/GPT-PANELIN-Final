@@ -13,7 +13,7 @@ permissions:
 jobs:
   validate:
     name: Validate Knowledge Base
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
 
@@ -58,8 +58,8 @@ jobs:
               sys.exit(1)
           else:
               print('✅ All JSON files are valid')
-          "
-      
+          PY
+
       - name: Run tests with coverage
         run: |
           pytest test_mcp_handlers_v1.py -v --cov=mcp --cov-report=term-missing --cov-report=xml
@@ -76,8 +76,8 @@ jobs:
 
   build:
     name: Build Docker Image
-    runs-on: ubuntu-latest
-    needs: test
+    runs-on: ubuntu-24.04
+    needs: validate
     if: success()
     permissions:
       contents: read
@@ -113,7 +113,7 @@ jobs:
 
   deploy-staging:
     name: Deploy to Staging
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: build
     if: github.ref == 'refs/heads/main' && success()
     permissions:
@@ -145,7 +145,7 @@ jobs:
 
   deploy-production:
     name: Deploy to Production
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: deploy-staging
     if: github.ref == 'refs/heads/main' && success()
     permissions:
@@ -191,5 +191,3 @@ jobs:
           STATUS="${{ job.status }}"
           echo "📢 Deployment to production: $STATUS"
           # Add notification logic here (Slack, email, etc.)
-              print('All JSON files are valid')
-          PY
