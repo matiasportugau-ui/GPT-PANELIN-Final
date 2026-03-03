@@ -14,7 +14,7 @@
 - [Features](#features)
 - [GPT Configuration](#gpt-configuration)
 - [Repository Structure](#repository-structure)
-- [Panelin v4.0 - Autonomous Quotation Engine](#-panelin-v40---autonomous-quotation-engine)
+- [Panelin v4.0 - Autonomous Quotation Engine](#panelin-v40---autonomous-quotation-engine)
 - [EVOLUCIONADOR - Autonomous Evolution Agent](#evolucionador---autonomous-evolution-agent)
 - [MCP Server - Model Context Protocol Integration](#mcp-server---model-context-protocol-integration)
 - [Knowledge Base](#knowledge-base)
