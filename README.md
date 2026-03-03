@@ -2943,7 +2943,7 @@ When reporting issues with the GPT or KB:
 - **Quotation Orchestrator**: Single (`process_quotation()`) and batch (`process_batch()`) entry points
 - **SAI Score**: System Accuracy Index (0–100) quality score per quotation; targets: Formal ≥ 95, Pre ≥ 80
 - **Regression Suite**: 19/19 expert test cases passing (100% pass rate)
-- **Stress Test**: 30 mixed requests — 0% blocking rate, 0% error rate, avg SAI 85.6, < 0.4 ms/quotation
+- **Stress Test**: 33 mixed requests — 0% blocking rate, 0% error rate, avg SAI 85.6, < 0.4 ms/quotation
 
 **2. New v4.0 API Endpoints**
 - `/api/quote` — Full v4.0 quotation pipeline (SRE + BOM + pricing + SAI)
