@@ -19,7 +19,7 @@ LOG_DIR = Path(__file__).parent / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 LOG_FILE = LOG_DIR / f"audit_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
 DEFAULT_SHEETS_ID = "1RHJ1eQlCWMcWY5NKkHCsH5F5XavC9yebh97bruJilbs"
-TARGET_WORKSHEET = "Atead"
+TARGET_WORKSHEET = "Daily Audit"
 
 logging.basicConfig(
     level=logging.INFO,
