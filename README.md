@@ -544,9 +544,9 @@ The **System Accuracy Index** (SAI) is a 0–100 quality score applied to every 
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|
-| `/api/quote` | POST | ✅ Yes | v4.0 quotation (SRE + BOM + pricing + SAI) |
-| `/api/validate` | POST | ✅ Yes | Multi-layer validation with non-blocking modes |
-| `/api/sai-score` | POST | ✅ Yes | Calculate SAI quality score for a quotation |
+| `/api/quote` | POST | ❌ No | v4.0 quotation (SRE + BOM + pricing + SAI) |
+| `/api/validate` | POST | ❌ No | Multi-layer validation with non-blocking modes |
+| `/api/sai-score` | POST | ❌ No | Calculate SAI quality score for a quotation |
 
 ### Usage
 
