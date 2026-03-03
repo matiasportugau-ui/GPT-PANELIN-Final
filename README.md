@@ -2938,7 +2938,7 @@ When reporting issues with the GPT or KB:
 - **Parser**: Tolerant free-text → structured `QuoteRequest` parser; never raises exceptions
 - **Structural Risk Engine (SRE)**: Replaces binary blocking with a 0–100 risk score (`R_datos + R_autoportancia + R_geometria + R_sistema`)
 - **BOM Engine**: Deterministic BOM generation with priority-based accessory selection (6 construction systems)
-- **Pricing Engine**: KB-backed pricing exclusively from `accessories_catalog.json` and `bromyros_pricing_master.json`; never invents prices
+- **Pricing Engine**: KB-backed pricing exclusively from `accessories_catalog.json` and `bromyros_pricing_gpt_optimized.json`; never invents prices
 - **Validation Engine**: Multi-layer (A: Integrity, B: Technical, C: Commercial, D: Mathematical) — non-blocking in pre mode
 - **Quotation Orchestrator**: Single (`process_quotation()`) and batch (`process_batch()`) entry points
 - **SAI Score**: System Accuracy Index (0–100) quality score per quotation; targets: Formal ≥ 95, Pre ≥ 80
