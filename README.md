@@ -1,10 +1,10 @@
-# Panelin 3.4 - BMC Assistant Pro GPT Configuration
+# Panelin 4.0 - BMC Assistant Pro GPT Configuration
 
-![Version](https://img.shields.io/badge/version-3.4-blue) ![GPT](https://img.shields.io/badge/platform-OpenAI%20GPT-green) ![KB](https://img.shields.io/badge/KB%20version-7.0-orange) ![Status](https://img.shields.io/badge/status-production-success) ![MCP](https://img.shields.io/badge/MCP-v0.3.0-purple)
+![Version](https://img.shields.io/badge/version-4.0-blue) ![GPT](https://img.shields.io/badge/platform-OpenAI%20GPT-green) ![KB](https://img.shields.io/badge/KB%20version-7.0-orange) ![Status](https://img.shields.io/badge/status-production-success) ![MCP](https://img.shields.io/badge/MCP-v0.3.0-purple) ![Engine](https://img.shields.io/badge/engine-v4.0-red)
 
 **Complete configuration files and knowledge base for Panelin GPT - Professional quotation assistant for BMC Uruguay panel systems**
 
-**New in v3.4:** Wolf API KB Write — persist conversations, corrections, and customer data directly through chat
+**New in v4.0:** Autonomous Quotation Engine with Structural Risk Engine (SRE), SAI quality scoring, multi-mode operation, and batch processing — never blocks sales unnecessarily
 
 ---
 
@@ -14,6 +14,7 @@
 - [Features](#features)
 - [GPT Configuration](#gpt-configuration)
 - [Repository Structure](#repository-structure)
+- [Panelin v4.0 - Autonomous Quotation Engine](#-panelin-v40---autonomous-quotation-engine)
 - [EVOLUCIONADOR - Autonomous Evolution Agent](#evolucionador---autonomous-evolution-agent)
 - [MCP Server - Model Context Protocol Integration](#mcp-server---model-context-protocol-integration)
 - [Knowledge Base](#knowledge-base)
@@ -37,7 +38,7 @@
 
 ## 🎯 Overview
 
-**Panelin 3.4** (BMC Assistant Pro) is an advanced AI assistant specialized in generating professional quotations for construction panel systems. This repository contains all configuration files, knowledge bases, documentation, automated deployment tools, and an autonomous evolution system needed to deploy and continuously improve the GPT on OpenAI's platform.
+**Panelin 4.0** (BMC Assistant Pro) is an advanced AI assistant specialized in generating professional quotations for construction panel systems. This repository contains all configuration files, knowledge bases, documentation, automated deployment tools, and an autonomous evolution system needed to deploy and continuously improve the GPT on OpenAI's platform.
 
 ### What is Panelin?
 
@@ -48,6 +49,7 @@ Panelin is a technical sales assistant that:
 - Provides technical advisory on panel systems (ISODEC, ISOPANEL, ISOROOF, ISOWALL, ISOFRIG)
 - Evaluates and trains sales personnel based on real interactions
 - Integrates with the Panelin Wolf API for real-time pricing and availability
+- **Runs a deterministic v4.0 calculation engine** with Structural Risk Engine (SRE) and SAI quality scoring
 
 ### Key Capabilities
 
@@ -61,6 +63,7 @@ Panelin is a technical sales assistant that:
 ✅ **Sales Training**: Evaluation and coaching based on historical interactions  
 ✅ **Automated Deployment**: Validation and packaging scripts for streamlined GPT upload  
 ✅ **Autonomous Evolution**: EVOLUCIONADOR system for continuous quality monitoring and improvement  
+✅ **v4.0 Quotation Engine**: Structural Risk Engine (SRE), multi-mode operation, SAI scoring, and batch processing  
 
 ---
 
@@ -120,11 +123,11 @@ Panelin is a technical sales assistant that:
 
 ### Basic Information
 
-- **Name**: Panelin 3.4
-- **Description**: BMC Assistant Pro - Specialized technical quotation assistant for panel systems (ISODEC, ISOPANEL, ISOROOF, ISOWALL, ISOFRIG) with complete BOM calculation, enhanced PDF generation (v2.0), Wolf API KB write capabilities, and professional advisory. Knowledge Base v7.0 with 70+ accessories catalog and parametric rules for 6 construction systems.
+- **Name**: Panelin 4.0
+- **Description**: BMC Assistant Pro - Specialized technical quotation assistant for panel systems (ISODEC, ISOPANEL, ISOROOF, ISOWALL, ISOFRIG) with complete BOM calculation, enhanced PDF generation (v2.0), Wolf API KB write capabilities, and professional advisory. Powered by v4.0 Autonomous Quotation Engine with SRE structural risk scoring, SAI quality index, multi-mode operation (informativo/pre/formal), and batch processing. Knowledge Base v7.0 with 70+ accessories catalog and parametric rules for 6 construction systems.
 - **Instructions**: See [Instrucciones GPT.rtf](Instrucciones%20GPT.rtf) for complete system instructions
-- **Version**: 3.4 (KB v7.0, PDF Template v2.0, MCP v0.3.0)
-- **Last Updated**: 2026-02-16
+- **Version**: 4.0 (Engine v4.0, KB v7.0, PDF Template v2.0, MCP v0.3.0)
+- **Last Updated**: 2026-03-03
 
 ### Conversation Starters
 
@@ -273,6 +276,28 @@ GPT-PANELIN-V3.3/
 │   ├── quotation_calculator_v3.py               # Python calculation engine v3.1
 │   └── quotation_calculator_v3.cpython-314.pyc  # Compiled bytecode
 │
+├── PANELIN v4.0 - AUTONOMOUS QUOTATION ENGINE
+│   └── panelin_v4/                              # v4.0 deterministic quotation engine
+│       ├── ARCHITECTURE.md                      # Full architecture documentation
+│       ├── PROMPT_CORE_V4.md                    # GPT integration prompt (v4.0)
+│       ├── IMPLEMENTATION_PACK.md               # Implementation details
+│       ├── __init__.py
+│       ├── engine/                              # Core calculation engines
+│       │   ├── classifier.py                    # Request type + mode classifier
+│       │   ├── parser.py                        # Free-text → QuoteRequest parser
+│       │   ├── sre_engine.py                    # Structural Risk Engine (SRE)
+│       │   ├── bom_engine.py                    # Bill of Materials generator
+│       │   ├── pricing_engine.py                # KB-backed pricing (no invented prices)
+│       │   ├── validation_engine.py             # Multi-layer non-blocking validator
+│       │   └── quotation_engine.py              # Orchestrator (single + batch)
+│       ├── evaluator/                           # Quality measurement
+│       │   ├── sai_engine.py                    # SAI quality score (0-100)
+│       │   ├── regression_suite.py              # 19 expert regression test cases
+│       │   └── stress_test_runner.py            # 30-case mixed stress test
+│       ├── data/
+│       │   └── default_assumptions.json         # Configurable defaults for missing data
+│       └── tests/                               # Unit test suite (34 tests)
+│
 ├── KB SELF-LEARNING MODULE (v3.4)
 │   └── kb_self_learning/                        # Knowledge base self-learning system
 │       ├── kb_writer_service.py                 # FastAPI service for KB entry creation
@@ -408,6 +433,154 @@ GPT-PANELIN-V3.3/
 │   └── README_REVIEW_SUMMARY.md                 # README audit results
 │
 ```
+
+---
+
+## 🚀 Panelin v4.0 - Autonomous Quotation Engine
+
+**Version:** 4.0 | **Status:** ✅ Production Ready | **Location:** `panelin_v4/` | **Regression pass rate:** 100%
+
+### What is the v4.0 Engine?
+
+Panelin v4.0 is an **Autonomous Technical-Commercial Quotation Engine** that replaces rigid blocking behavior with intelligent risk classification. It is a fully deterministic Python calculation layer — all math uses Python, never LLM inference.
+
+**Design Principles:**
+1. **Never block sales unnecessarily** — classify risk, don't prohibit
+2. **Separation of concerns** — calculation, validation, and presentation are independent
+3. **Deterministic calculations** — all math uses Python, never LLM inference
+4. **Explicit assumptions** — every default value is declared in the output
+5. **Measurable quality** — every quotation gets a SAI score (0–100)
+6. **Evolutionary** — detects patterns and improves over time
+
+### Engine Architecture
+
+```
+INPUT TEXT
+    ↓
+┌─────────────────┐
+│  1. Classifier   │  → Determines request type & operating mode
+└────────┬────────┘
+         ↓
+┌─────────────────┐
+│  2. Parser       │  → Converts text to structured QuoteRequest
+└────────┬────────┘
+         ↓
+┌─────────────────┐
+│  3. SRE Engine   │  → Calculates Structural Risk Score (0-100)
+└────────┬────────┘
+         ↓
+┌─────────────────┐
+│  4. BOM Engine   │  → Generates Bill of Materials
+└────────┬────────┘
+         ↓
+┌─────────────────┐
+│  5. Pricing      │  → Values items from KB (never invents)
+└────────┬────────┘
+         ↓
+┌─────────────────┐
+│  6. Validation   │  → Multi-layer checks (non-blocking in pre mode)
+└────────┬────────┘
+         ↓
+┌─────────────────┐
+│  7. SAI Score    │  → Quality index for the quotation
+└────────┬────────┘
+         ↓
+    OUTPUT JSON
+```
+
+### Operating Modes
+
+| Mode | Blocks? | Use Case |
+|------|---------|----------|
+| `informativo` | Never | Quick info, ranges |
+| `pre_cotizacion` | Never | Internal run, batch, ML/WA |
+| `formal` | If CRITICAL | PDF, JSON contractual |
+
+### Structural Risk Engine (SRE)
+
+The SRE replaces binary blocking with a 0–100 risk score:
+
+```
+SRE = R_datos + R_autoportancia + R_geometria + R_sistema
+```
+
+| Component | Range | What it measures |
+|-----------|-------|-----------------|
+| R_datos | 0–40 | Data completeness (span, thickness, dimensions) |
+| R_autoportancia | 0–50 | Structural capacity vs requested span |
+| R_geometria | 0–15 | Geometric complexity (4 aguas, mariposa, >12m) |
+| R_sistema | 0–15 | System sensitivity (ISOROOF > ISODEC PIR > EPS) |
+
+**Quotation Levels:**
+
+| SRE Score | Level | Action |
+|-----------|-------|--------|
+| 0–30 | Formal Certified | Full validation, PDF ready |
+| 31–60 | Technical Conditioned | Valid with warnings |
+| 61–85 | Commercial Quick | Pre-quote with assumptions |
+| 86+ | Technical Block | Requires engineering review |
+
+### SAI Quality Index
+
+The **System Accuracy Index** (SAI) is a 0–100 quality score applied to every quotation.
+
+**Targets:** Formal ≥ 95 | Pre ≥ 80 | Informativo ≥ 60
+
+**Key penalty codes:** P1 (autoportancia exceeded, −30), P2 (math inconsistency, −25), P3 (missing KB prices, −10/−20), P6 (unnecessary blocking, −10)  
+**Bonus codes:** B1 (alternative thickness suggested, +5), B3 (very low structural risk, +3)
+
+### Key Metrics
+
+| Metric | Value |
+|--------|-------|
+| Unit tests | 34/34 passing |
+| Regression pass rate | 100% (19/19) |
+| Stress test blocking rate | 0% |
+| Stress test error rate | 0% |
+| Average SAI (stress) | 85.6 |
+| Processing time | < 0.4 ms per quotation |
+
+### API Endpoints (v4.0)
+
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/api/quote` | POST | ✅ Yes | v4.0 quotation (SRE + BOM + pricing + SAI) |
+| `/api/validate` | POST | ✅ Yes | Multi-layer validation with non-blocking modes |
+| `/api/sai-score` | POST | ✅ Yes | Calculate SAI quality score for a quotation |
+
+### Usage
+
+```python
+from panelin_v4.engine.quotation_engine import process_quotation, process_batch
+
+# Single quotation
+output = process_quotation("Necesito ISODEC EPS 100mm techo 5x11m", force_mode=None)
+
+# Batch processing
+outputs = process_batch([
+    {"text": "Isodec EPS 100mm 5x11m"},
+    {"text": "Isopanel EPS 50mm pared 3x8m"},
+])
+```
+
+### Comparison: v3.4 vs v4.0
+
+| Aspect | v3.4 | v4.0 |
+|--------|------|------|
+| Missing span | Blocks | Classifies risk, uses default |
+| Validation | Coupled to calculation | Separate engine |
+| Modes | Single (formal) | 3 levels (info/pre/formal) |
+| Metrics | None | SAI scoring per quotation |
+| Testing | MCP-focused | 34 automated + 19 regression + 30 stress |
+| Batch processing | Via MCP background tasks | Built-in `process_batch()` |
+| Blocking behavior | Binary | Risk-based 4-level SRE |
+| Speed | ~100 ms | < 0.4 ms |
+
+### Documentation
+
+- **[panelin_v4/ARCHITECTURE.md](panelin_v4/ARCHITECTURE.md)** - Complete architecture reference
+- **[panelin_v4/PROMPT_CORE_V4.md](panelin_v4/PROMPT_CORE_V4.md)** - GPT integration prompt for v4.0
+- **[panelin_v4/IMPLEMENTATION_PACK.md](panelin_v4/IMPLEMENTATION_PACK.md)** - Implementation details
 
 ---
 
@@ -894,13 +1067,23 @@ curl -H "X-API-Key: YOUR_WOLF_API_KEY" \
 | `/product_price` | POST | ✅ Yes | Get price for product by ID |
 | `/check_availability` | POST | ✅ Yes | Check product availability & stock |
 
-#### Knowledge Base Services (v3.4)
+#### Knowledge Base Services (v3.4+)
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|
 | `/kb/conversations` | POST | ✅ Yes | Persist conversation summaries to GCS |
 
-**New in v3.4:** The Wolf API now includes Knowledge Base write operations that allow the GPT to persist conversation data, corrections, and customer information directly through chat interactions. Data is stored in Google Cloud Storage as JSONL for downstream analysis and training.
+#### v4.0 Quotation Engine Endpoints
+
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/api/quote` | POST | ✅ Yes | v4.0 full quotation (SRE + BOM + pricing + SAI score) |
+| `/api/validate` | POST | ✅ Yes | Multi-layer validation with non-blocking modes |
+| `/api/sai-score` | POST | ✅ Yes | Calculate SAI quality index for a quotation |
+
+**New in v4.0:** The API now exposes the full v4.0 quotation engine. `/api/quote` runs the complete pipeline: classifier → parser → SRE → BOM → pricing → validation → SAI score — returning a structured JSON result. Regression suite: 19/19 pass rate (100%).
+
+**New in v3.4:** The Wolf API includes Knowledge Base write operations that allow the GPT to persist conversation data, corrections, and customer information directly through chat interactions. Data is stored in Google Cloud Storage as JSONL for downstream analysis and training.
 
 **Implementation:** See [`wolf_api/`](./wolf_api/) for the FastAPI backend implementation with GCS persistence, including deployment guides and IAM setup instructions.
 
@@ -2393,6 +2576,8 @@ See [PANELIN_TRAINING_GUIDE.md](PANELIN_TRAINING_GUIDE.md) for details.
 
 | Document | Description | Version |
 |----------|-------------|---------|
+| [panelin_v4/ARCHITECTURE.md](panelin_v4/ARCHITECTURE.md) | v4.0 engine architecture, SRE, BOM, SAI, module details | 4.0 |
+| [panelin_v4/PROMPT_CORE_V4.md](panelin_v4/PROMPT_CORE_V4.md) | GPT integration prompt for v4.0 with SRE blocks | 4.0 |
 | [IMPLEMENTATION_SUMMARY_V3.4.md](IMPLEMENTATION_SUMMARY_V3.4.md) | V3.4 changes (Wolf API write, governance, storage) | 3.4 |
 | [IMPLEMENTATION_SUMMARY_V3.3.md](IMPLEMENTATION_SUMMARY_V3.3.md) | V3.3 changes and new features | 3.3 |
 | [EVOLUCIONADOR_FINAL_REPORT.md](EVOLUCIONADOR_FINAL_REPORT.md) | EVOLUCIONADOR completion report | 1.0.0 |
@@ -2433,6 +2618,7 @@ See [PANELIN_TRAINING_GUIDE.md](PANELIN_TRAINING_GUIDE.md) for details.
 | Module | Description | Version |
 |--------|-------------|---------|
 | `quotation_calculator_v3.py` | Core calculation engine with Decimal precision, autoportancia validation, 6 construction systems | 3.1 |
+| `panelin_v4/` | Autonomous Quotation Engine: Classifier, Parser, SRE, BOM, Pricing, Validation, SAI Score | 4.0 |
 | `panelin_reports/` | Professional PDF generation with BMC branding, ReportLab-based | 2.0 |
 | `openai_ecosystem/` | OpenAI API response extraction and normalization utilities | 1.0 |
 | `.evolucionador/` | Autonomous evolution agent with 7 validators, 6 optimizers, report generator | 1.0.0 |
@@ -2536,7 +2722,35 @@ python \
 - ✅ File size within expected ranges
 - ✅ File readability and accessibility
 
-#### 4. API Connection Tests
+#### 4. Panelin v4.0 Engine Tests
+**Location:** `panelin_v4/tests/` | `panelin_v4/evaluator/`
+
+```bash
+# Run v4.0 unit tests (from repository root)
+pytest panelin_v4/tests/ -v
+
+# Run regression suite (19 expert test cases)
+python -m pytest panelin_v4/evaluator/regression_suite.py -v
+
+# Run stress test (30 mixed requests)
+python panelin_v4/evaluator/stress_test_runner.py
+```
+
+**Test Coverage:**
+- ✅ Unit tests: 34/34 passing across all engine modules
+- ✅ Regression suite: 19/19 passing (100% pass rate)
+  - Structural: autoportancia limits, span validation
+  - BOM: completeness, cumbrera for 2 aguas, tacos for hormigon
+  - Pricing: positive totals, accessories-only
+  - Commercial: non-blocking in pre mode, update detection
+  - Real-world: actual batch quotation requests
+- ✅ Stress test: 30 mixed requests (40% incomplete, 30% ambiguous, 20% updates, 10% complete)
+  - 0% blocking rate
+  - 0% error rate
+  - Average SAI: 85.6
+  - Processing time: < 0.4 ms/quotation
+
+#### 5. API Connection Tests
 **Location:** `test_panelin_api_connection.sh`
 
 ```bash
@@ -2559,7 +2773,7 @@ export WOLF_API_KEY="your_api_key_here"
 - API key passed via curl config file (not command line)
 - Connection timeout and retry logic to prevent hanging
 
-#### 5. MCP Handler Tests
+#### 6. MCP Handler Tests
 **Location:** `mcp/tests/`
 
 ```bash
@@ -2577,7 +2791,7 @@ pytest mcp/tests/test_wolf_kb_write.py -v
 - ✅ Governance handlers (validate/commit corrections)
 - ✅ Quotation persistence handler
 
-#### 6. Wolf API Tests
+#### 7. Wolf API Tests
 **Location:** `wolf_api/tests/`
 
 ```bash
@@ -2591,7 +2805,7 @@ pytest wolf_api/tests/ -v
 - ✅ X-API-Key authentication
 - ✅ Error handling and edge cases
 
-#### 7. KB Self-Learning Tests
+#### 8. KB Self-Learning Tests
 **Location:** `kb_self_learning/tests/`
 
 ```bash
@@ -2604,7 +2818,7 @@ pytest kb_self_learning/tests/ -v
 - ✅ Approval workflow status transitions
 - ✅ Reviewer notes and audit trail
 
-#### 8. Backend Tests
+#### 9. Backend Tests
 **Location:** `backend/tests/`
 
 ```bash
@@ -2618,7 +2832,7 @@ pytest backend/tests/ -v
 - ✅ Error cases and edge conditions
 - ✅ Mocked psycopg2/secretmanager (no DB required)
 
-#### 9. Background Task Tests
+#### 10. Background Task Tests
 **Location:** `background_tasks/tests/`
 
 ```bash
@@ -2715,7 +2929,43 @@ When reporting issues with the GPT or KB:
 
 ## 📜 Version History
 
-### v3.4 / KB v7.0 / MCP v0.3.0 (2026-02-14) - Current
+### v4.0 / Engine v4.0 / KB v7.0 / MCP v0.3.0 (2026-03-03) - Current
+
+**Major Features:**
+
+**1. Autonomous Quotation Engine v4.0** (`panelin_v4/`)
+- **Classifier**: Detects request type (roof_system, wall_system, room_complete, accessories_only, update, etc.) and operating mode
+- **Parser**: Tolerant free-text → structured `QuoteRequest` parser; never raises exceptions
+- **Structural Risk Engine (SRE)**: Replaces binary blocking with a 0–100 risk score (`R_datos + R_autoportancia + R_geometria + R_sistema`)
+- **BOM Engine**: Deterministic BOM generation with priority-based accessory selection (6 construction systems)
+- **Pricing Engine**: KB-backed pricing exclusively from `accessories_catalog.json` and `bromyros_pricing_master.json`; never invents prices
+- **Validation Engine**: Multi-layer (A: Integrity, B: Technical, C: Commercial, D: Mathematical) — non-blocking in pre mode
+- **Quotation Orchestrator**: Single (`process_quotation()`) and batch (`process_batch()`) entry points
+- **SAI Score**: System Accuracy Index (0–100) quality score per quotation; targets: Formal ≥ 95, Pre ≥ 80
+- **Regression Suite**: 19/19 expert test cases passing (100% pass rate)
+- **Stress Test**: 30 mixed requests — 0% blocking rate, 0% error rate, avg SAI 85.6, < 0.4 ms/quotation
+
+**2. New v4.0 API Endpoints**
+- `/api/quote` — Full v4.0 quotation pipeline (SRE + BOM + pricing + SAI)
+- `/api/validate` — Multi-layer validation with non-blocking modes
+- `/api/sai-score` — Standalone SAI quality index calculation
+
+**Version Matrix:**
+
+| Component | v3.4 | v4.0 |
+|-----------|------|------|
+| Panelin Version | 3.4 | 4.0 |
+| Engine Version | — | 4.0 |
+| MCP Server Version | 0.3.0 | 0.3.0 |
+| KB Version | 7.0 | 7.0 (unchanged) |
+| PDF Template Version | 2.0 | 2.0 (unchanged) |
+| Total MCP Tools | 18 | 18 |
+| Regression pass rate | — | 19/19 (100%) |
+| Unit tests | — | 34/34 |
+
+---
+
+### v3.4 / KB v7.0 / MCP v0.3.0 (2026-02-14)
 
 **Major Features:**
 
@@ -2939,11 +3189,12 @@ For technical support or questions about this GPT configuration:
 
 ---
 
-**Version:** 3.4  
+**Version:** 4.0  
+**Engine Version:** 4.0  
 **Knowledge Base Version:** 7.0  
 **PDF Template Version:** 2.0  
 **MCP Server Version:** 0.3.0  
-**Last Updated:** 2026-02-16  
+**Last Updated:** 2026-03-03  
 **Maintained by:** BMC Uruguay Development Team  
 
 ---
