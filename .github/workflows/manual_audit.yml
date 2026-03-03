@@ -39,13 +39,9 @@ jobs:
 
       - name: 🌅 Run morning audit
         env:
-          GOOGLE_SHEETS_ID: ${{ secrets.GOOGLE_SHEETS_ID }}
+          GOOGLE_SHEETS_ID: 1RHJ1eQlCWMcWY5NKkHCsH5F5XavC9yebh97bruJilbs
           GOOGLE_SHEETS_CREDENTIALS_PATH: ./scripts/credentials/service_account.json
         run: |
-          if [ -z "$GOOGLE_SHEETS_ID" ]; then
-            echo "❌ Missing required secret: GOOGLE_SHEETS_ID"
-            exit 1
-          fi
           python scripts/morning_audit.py
 
       - name: 📊 Upload logs

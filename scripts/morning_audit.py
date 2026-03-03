@@ -18,6 +18,8 @@ from dotenv import load_dotenv
 LOG_DIR = Path(__file__).parent / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 LOG_FILE = LOG_DIR / f"audit_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+DEFAULT_SHEETS_ID = "1RHJ1eQlCWMcWY5NKkHCsH5F5XavC9yebh97bruJilbs"
+TARGET_WORKSHEET = "Atead"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -44,12 +46,12 @@ class PanelinAudit:
     def _connect_sheets(self) -> Any | None:
         """Connect to Google Sheets if configuration is present."""
         creds_path = os.getenv("GOOGLE_SHEETS_CREDENTIALS_PATH", "").strip()
-        sheet_id = os.getenv("GOOGLE_SHEETS_ID", "").strip()
+        sheet_id = os.getenv("GOOGLE_SHEETS_ID", DEFAULT_SHEETS_ID).strip()
 
-        if not creds_path or not sheet_id:
+        if not creds_path:
             logger.warning(
-                "⚠️ Google Sheets env vars missing. "
-                "Set GOOGLE_SHEETS_CREDENTIALS_PATH and GOOGLE_SHEETS_ID."
+                "⚠️ Google Sheets credentials path missing. "
+                "Set GOOGLE_SHEETS_CREDENTIALS_PATH."
             )
             return None
 
@@ -147,35 +149,85 @@ class PanelinAudit:
             return None
 
     def write_to_sheets(self) -> None:
-        """Write results to 'Daily Audit' worksheet if Sheets is configured."""
+        """Write rows to 'Atead' worksheet (columns A-H) if configured."""
         if not self.sheet:
             logger.warning("⚠️ Skipping Google Sheets write (no sheet connection).")
             return
 
         try:
-            ws = self.sheet.worksheet("Daily Audit")
+            ws = self.sheet.worksheet(TARGET_WORKSHEET)
         except Exception:
-            ws = self.sheet.add_worksheet("Daily Audit", rows=100, cols=10)
+            ws = self.sheet.add_worksheet(TARGET_WORKSHEET, rows=1000, cols=8)
 
         try:
-            header = ws.row_values(1)
-            if not header:
-                ws.append_row(["Timestamp", "Channel", "Status", "Count", "Notes"])
+            all_rows = ws.get_all_values()
+            existing_keys: set[tuple[str, str, str]] = set()
+            last_data_row = 0
 
-            rows = []
-            for data in self.results["channels"].values():
-                rows.append(
+            for row_number, row in enumerate(all_rows, start=1):
+                normalized_row = (row + [""] * 8)[:8]
+                if any(cell.strip() for cell in normalized_row):
+                    last_data_row = row_number
+
+                fecha = normalized_row[2].strip()
+                cliente = normalized_row[3].strip()
+                origen = normalized_row[4].strip().upper()
+                if fecha and cliente and origen:
+                    existing_keys.add((cliente.casefold(), fecha, origen))
+
+            origin_by_channel = {
+                "whatsapp": "WA",
+                "facebook": "IG",
+                "mercadolibre": "ML",
+                "email": "EM",
+            }
+            fecha_hoy = datetime.now().strftime("%d-%m")
+            rows_to_insert: list[list[str]] = []
+            pending_keys: set[tuple[str, str, str]] = set()
+
+            for channel_key, data in self.results["channels"].items():
+                origen = origin_by_channel.get(channel_key, "CL")
+                cliente = f"Audit {data['platform']}"
+                consulta = data.get("message", "")
+                duplicate_key = (cliente.casefold(), fecha_hoy, origen)
+
+                if duplicate_key in existing_keys or duplicate_key in pending_keys:
+                    logger.info(
+                        "ℹ️ Skipping duplicate row for cliente=%s fecha=%s origen=%s",
+                        cliente,
+                        fecha_hoy,
+                        origen,
+                    )
+                    continue
+
+                rows_to_insert.append(
                     [
-                        self.results["timestamp"],
-                        data["platform"],
-                        data["status"],
-                        data.get("count", 0),
-                        data.get("message", ""),
+                        "",  # A: Asig.
+                        "Pendiente",  # B: Estado
+                        fecha_hoy,  # C: Fecha
+                        cliente,  # D: Cliente
+                        origen,  # E: Orig.
+                        "",  # F: Telefono-Contacto
+                        "",  # G: Direccion/Zona
+                        consulta,  # H: Consulta
                     ]
                 )
+                pending_keys.add(duplicate_key)
 
-            ws.append_rows(rows)
-            logger.info("✅ Results written to Google Sheets")
+            if not rows_to_insert:
+                logger.info("ℹ️ No new rows to insert (all duplicates already exist).")
+                return
+
+            start_row = last_data_row + 1 if last_data_row > 0 else 1
+            end_row = start_row + len(rows_to_insert) - 1
+            ws.update(f"A{start_row}:H{end_row}", rows_to_insert)
+            logger.info(
+                "✅ Inserted %s row(s) into worksheet '%s' (A%s:H%s)",
+                len(rows_to_insert),
+                TARGET_WORKSHEET,
+                start_row,
+                end_row,
+            )
         except Exception as exc:  # pragma: no cover
             logger.error("❌ Failed to write to Google Sheets: %s", exc)
 
