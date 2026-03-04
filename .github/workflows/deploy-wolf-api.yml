@@ -67,6 +67,19 @@ jobs:
           docker push "${IMAGE_NAME}:${{ github.sha }}"
           docker push "${IMAGE_NAME}:latest"
 
+- name: Validate required secrets
+run: |
+missing=""
+if [ -z "$SA" ]; then missing="$missing GCP_RUNTIME_SA_EMAIL"; fi
+if [ -z "$BUCKET" ]; then missing="$missing KB_GCS_BUCKET"; fi
+if [ -n "$missing" ]; then
+echo "::error::Missing required secrets:$missing"
+exit 1
+fi
+env:
+SA: ${{ secrets.GCP_RUNTIME_SA_EMAIL }}
+BUCKET: ${{ secrets.KB_GCS_BUCKET }}
+
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v3
         with:
