@@ -16,6 +16,7 @@ from fastapi.security.api_key import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from starlette.concurrency import run_in_threadpool
+from pdf_cotizacion import router as pdf_router
 
 logger = logging.getLogger(__name__)
 app = FastAPI(
@@ -34,6 +35,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(pdf_router)
 
 API_KEY_HEADER = APIKeyHeader(name="X-API-Key", auto_error=False)
 WOLF_API_KEY = os.environ.get("WOLF_API_KEY", "")
