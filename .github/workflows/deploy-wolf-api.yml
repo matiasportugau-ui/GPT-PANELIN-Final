@@ -86,7 +86,6 @@ jobs:
             --max-instances=10
             --memory=512Mi
             --cpu=1
-            --service-account=${{ secrets.GCP_RUNTIME_SA_EMAIL }}
             --timeout=60
 
       - name: Show service URL
