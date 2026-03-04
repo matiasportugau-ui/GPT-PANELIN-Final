@@ -18,6 +18,7 @@ from pydantic import BaseModel, Field
 from starlette.concurrency import run_in_threadpool
 from .pdf_cotizacion import router as pdf_router
 from .sheet_mover import router as mover_router
+from .pdf_drive_integration import router as pdf_drive_router
 
 logger = logging.getLogger(__name__)
 app = FastAPI(
@@ -39,6 +40,7 @@ app.add_middleware(
 
 app.include_router(pdf_router)
 app.include_router(mover_router)
+app.include_router(pdf_drive_router)
 
 API_KEY_HEADER = APIKeyHeader(name="X-API-Key", auto_error=False)
 WOLF_API_KEY = os.environ.get("WOLF_API_KEY", "")
@@ -829,6 +831,7 @@ async def update_row(data: dict, _=Security(require_api_key)):
     col_map = {
         "estado": "B", "asignado": "A", "consulta": "H",
         "telefono": "F", "direccion": "G", "comentarios": "I",
+        "cotizacion": "J",
     }
     updated = []
     for field, col in col_map.items():
@@ -840,6 +843,23 @@ async def update_row(data: dict, _=Security(require_api_key)):
     return {"success": True, "row_number": rn, "fields_updated": updated}
 
 
+@app.post("/sheets/set_cotizacion_url")
+async def set_cotizacion_url(data: dict, api_key: str = Security(require_api_key)):
+    """Write a PDF/Drive URL into Column J (Cotizacion) for a given row."""
+    rn = data.get("row_number")
+    url = data.get("url", "")
+    if not rn:
+        raise HTTPException(400, "row_number is required")
+        if not url:
+            raise HTTPException(400, "url is required")
+            tab = data.get("tab")
+            if tab:
+                ws = await run_in_threadpool(_get_worksheet, tab)
+            else:
+                ws = await run_in_threadpool(_get_admin_worksheet)
+                await run_in_threadpool(ws.update_acell, f"J{rn}", url)
+                return {"success": True, "row_number": rn, "column": "J", "url_written": url}
+                
 @app.get("/sheets/row/{row_number}")
 async def get_row(row_number: int, tab: Optional[str] = None, _=Security(require_api_key)):
     ws = await run_in_threadpool(_get_worksheet, tab)
