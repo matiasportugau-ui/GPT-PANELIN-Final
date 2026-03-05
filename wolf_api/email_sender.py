@@ -82,7 +82,7 @@ async def send_pedido_email(
             "SMTP_PASS not configured. Set it in Cloud Run environment variables."
         )
 
-    try:
+    
         # Build the email
         msg = MIMEMultipart()
         msg["From"] = f"{SMTP_CFG['from_name']} <{SMTP_CFG['user']}>"
